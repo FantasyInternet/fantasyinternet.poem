@@ -3,6 +3,8 @@ import "env" "popToMemory"    _popToMemory     1 0
 import "env" "teeToMemory"    _teeToMemory     1 0
 import "env" "getBufferSize"  _getBufferSize   0 1
 
+export_memory "memory"
+
 func pushFromMemory string
   _pushFromMemory (address_of string) (size_of string)
 
