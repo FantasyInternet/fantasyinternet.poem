@@ -1,0 +1,7 @@
+include "./input.poem"
+
+import "env" "getMouseX"        getMouseX       0 1
+import "env" "getMouseY"        getMouseY       0 1
+import "env" "getMousePressed"  getMousePressed 0 1
+import "env" "setNativeMouse"   setNativeMouse  1 0
+

@@ -1,0 +1,28 @@
+{
+  "name": "fantasyinternet.poem",
+  "version": "0.1.0",
+  "description": "Fantasy Internet library for Poetry",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FantasyInternet/fantasyinternet.poem.git"
+  },
+  "keywords": [
+    "fantasyinternet",
+    "library",
+    "poetry"
+  ],
+  "author": "poetic android",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FantasyInternet/fantasyinternet.poem/issues"
+  },
+  "homepage": "https://github.com/FantasyInternet/fantasyinternet.poem#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "poetry-compiler": "^0.8.0"
+  }
+}

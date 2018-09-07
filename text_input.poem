@@ -1,0 +1,24 @@
+include "./buffer_stack.poem"
+include "./input.poem"
+
+import "env" "getInputText"     _getInputText 1 0
+import "env" "getInputPosition" getInputPosition 0 1
+import "env" "getInputSelected" getInputSelected 0 1
+import "env" "getInputKey"      getInputKey 0 1
+import "env" "setInputType"     setInputType 1 0
+import "env" "setInputText"     _setInputText 0 0
+import "env" "setInputPosition" setInputPosition 2 0
+import "env" "replaceInputText" _replaceInputText 1 0
+
+func getInputText
+  return popStringToMemory _getInputText
+
+func setInputText string
+  pushFromMemory string
+  _setInputText
+
+func replaceInputText search replace fromPos
+  pushFromMemory search
+  pushFromMemory replace
+  _replaceInputText fromPos
+

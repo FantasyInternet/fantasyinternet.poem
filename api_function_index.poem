@@ -1,0 +1,16 @@
+include "./buffer_stack.poem"
+
+import "env" "getApiFunctionIndex"  _getApiFunctionIndex  0 1
+import "env" "callApiFunction"      _callApiFunction00    1 0
+import "env" "callApiFunction"      _callApiFunction01    1 1
+import "env" "callApiFunction"      _callApiFunction10    2 0
+import "env" "callApiFunction"      _callApiFunction11    2 1
+import "env" "callApiFunction"      _callApiFunction20    3 0
+import "env" "callApiFunction"      _callApiFunction21    3 1
+import "env" "callApiFunction"      _callApiFunction30    4 0
+import "env" "callApiFunction"      _callApiFunction31    4 1
+
+func getApiFunctionIndex name
+  pushFromMemory name
+  return _getApiFunctionIndex
+

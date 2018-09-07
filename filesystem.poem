@@ -1,0 +1,35 @@
+include "./buffer_stack.poem"
+
+import "env" "read"   _read   1 1
+import "env" "write"  _write  1 1
+import "env" "delete" _delete 1 1
+import "env" "list"   _list   1 1
+import "env" "head"   _head   1 1
+import "env" "post"   _post   1 1
+
+func read path callback
+  pushFromMemory path
+  return _read callback
+
+func write path data callback
+  pushFromMemory path
+  pushFromMemory data
+  return _write callback
+
+func delete path callback
+  pushFromMemory path
+  return _delete callback
+
+func list path callback
+  pushFromMemory path
+  return _list callback
+
+func head path callback
+  pushFromMemory path
+  return _head callback
+
+func post path data callback
+  pushFromMemory path
+  pushFromMemory data
+  return _post callback
+

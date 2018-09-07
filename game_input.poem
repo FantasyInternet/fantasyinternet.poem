@@ -1,0 +1,9 @@
+include "./input.poem"
+
+import "env" "getGameAxisX" getGameAxisX 0 1
+import "env" "getGameAxisY" getGameAxisY 0 1
+import "env" "getGameButtonA" getGameButtonA 0 1
+import "env" "getGameButtonB" getGameButtonB 0 1
+import "env" "getGameButtonX" getGameButtonX 0 1
+import "env" "getGameButtonY" getGameButtonY 0 1
+

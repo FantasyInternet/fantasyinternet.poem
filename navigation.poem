@@ -1,0 +1,22 @@
+include "./buffer_stack.poem"
+
+import "env" "connectTo" _connectTo 0 0
+import "env" "shutdown" shutdown 0 0
+import "env" "getOriginUrl" _getOriginUrl 0 1
+import "env" "getBaseUrl" _getBaseUrl 0 1
+import "env" "setBaseUrl" _setBaseUrl 0 0
+
+func connectTo url
+  pushFromMemory url
+  _connectTo
+
+func getOriginUrl
+  return popStringToMemory _getOriginUrl
+
+func getBaseUrl
+  return popStringToMemory _getBaseUrl
+
+func setBaseUrl url
+  pushFromMemory url
+  _setBaseUrl
+

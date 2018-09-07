@@ -1,0 +1,29 @@
+import "env" "pushFromMemory" _pushFromMemory  2 0
+import "env" "popToMemory"    _popToMemory     1 0
+import "env" "teeToMemory"    _teeToMemory     1 0
+import "env" "getBufferSize"  _getBufferSize   0 1
+
+func pushFromMemory string
+  _pushFromMemory (address_of string) (size_of string)
+
+func popToMemory len
+  if len == null
+    len = _getBufferSize
+  var bin = binary
+  binary_write bin len-1 0
+  _popToMemory (address_of bin)
+  return bin
+
+func popStringToMemory len
+  return "" + popToMemory len
+
+func teeToMemory len
+  if len == null
+    len = _getBufferSize
+  var bin = binary
+  binary_write bin len-1 0
+  _teeToMemory (address_of bin)
+  return bin
+
+func teeStringToMemory len
+  return "" + teeToMemory len

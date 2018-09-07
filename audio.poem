@@ -1,0 +1,8 @@
+import "env" "startTone" _startTone 4 0
+import "env" "stopTone" stopTone 1 0
+
+func startTone channel frequency volume type
+  if volume == null
+    volume = 1
+  _startTone channel frequency volume type
+
