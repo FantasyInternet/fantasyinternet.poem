@@ -11,8 +11,7 @@ func pushFromMemory string
 func popToMemory len
   if len == null
     len = _getBufferSize
-  var bin = binary
-  binary_write bin len-1 0
+  var bin = binary_string len
   _popToMemory (address_of bin)
   return bin
 
@@ -22,8 +21,7 @@ func popStringToMemory len
 func teeToMemory len
   if len == null
     len = _getBufferSize
-  var bin = binary
-  binary_write bin len-1 0
+  var bin = binary_string len
   _teeToMemory (address_of bin)
   return bin
 

@@ -8,10 +8,13 @@ import "env" "head"   _head   1 1
 import "env" "post"   _post   1 1
 
 export_table "table"
+var _callbacks = object
 
 func read path callback
   pushFromMemory path
-  return _read callback
+  var reqID = _read #_readCB
+  _callbacks[""+reqID] = callback
+  return reqID
 
 func write path data callback
   pushFromMemory path
@@ -24,14 +27,26 @@ func delete path callback
 
 func list path callback
   pushFromMemory path
-  return _list callback
+  var reqID = _list #_readCB
+  _callbacks[""+reqID] = callback
+  return reqID
 
 func head path callback
   pushFromMemory path
-  return _head callback
+  var reqID = _head #_readCB
+  _callbacks[""+reqID] = callback
+  return reqID
 
 func post path data callback
   pushFromMemory path
-  pushFromMemory data
-  return _post callback
+  var reqID = _post #_readCB
+  _callbacks[""+reqID] = callback
+  return reqID
+
+func _readCB success length reqID
+  var callback = _callbacks[""+reqID]
+  _callbacks[""+reqID] = null
+  if success
+    var data = popToMemory length
+  #callback success data reqID
 
