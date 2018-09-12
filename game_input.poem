@@ -7,3 +7,4 @@ import "env" "getGameButtonB" getGameButtonB 0 1
 import "env" "getGameButtonX" getGameButtonX 0 1
 import "env" "getGameButtonY" getGameButtonY 0 1
 
+focusInput 3

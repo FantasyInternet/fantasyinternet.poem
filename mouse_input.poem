@@ -5,3 +5,4 @@ import "env" "getMouseY"        getMouseY       0 1
 import "env" "getMousePressed"  getMousePressed 0 1
 import "env" "setNativeMouse"   setNativeMouse  1 0
 
+focusInput 2
