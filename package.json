@@ -1,10 +1,11 @@
 {
   "name": "fantasyinternet.poem",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Fantasy Internet library for Poetry",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "poetry boot.poem -b boot.wasm"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,6 @@
   "homepage": "https://github.com/FantasyInternet/fantasyinternet.poem#readme",
   "dependencies": {},
   "devDependencies": {
-    "poetry-compiler": "^0.8.0"
+    "poetry-compiler": "^0.15.0"
   }
 }

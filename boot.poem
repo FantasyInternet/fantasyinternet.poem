@@ -1,0 +1,23 @@
+include "./api_function_index.poem"
+include "./audio.poem"
+include "./display.poem"
+include "./filesystem.poem"
+include "./game_input.poem"
+include "./log.poem"
+include "./mouse_input.poem"
+include "./navigation.poem"
+include "./process.poem"
+include "./text_input.poem"
+
+export "init" init
+  setDisplayMode 0 80 80
+  print "hello... there...?\n"
+  read "./README.md" #readout
+  list "./" #readout
+
+func readout success data reqID
+  if success
+    print data
+  else
+    print "Uuhmm.. got some trouble reading the file.."
+
