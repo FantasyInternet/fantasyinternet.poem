@@ -12,12 +12,12 @@ include "./process.poem"
 include "./text_input.poem"
 
 export "init" init
-  setDisplayMode 0 80 32
+  set_display_mode 0 80 32
   print "hello... there...?\n"
   read "./README.md" #readout
   list "./" #readout
 
-func readout success data reqID
+func readout success data req_id
   if success
     print data
   else

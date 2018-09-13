@@ -1,13 +1,13 @@
 include "./buffer_stack.poem"
 
-import "env" "loadProcess"      _loadProcess    0 1
-import "env" "processStatus"    processStatus   1 1
-import "env" "stepProcess"      stepProcess     1 0
-import "env" "callbackProcess"  callbackProcess 8 1
-import "env" "killProcess"      killProcess     1 0
-import "env" "transferMemory"   transferMemory  5 0
+import "env" "loadProcess"      _load_process    0 1
+import "env" "processStatus"    process_status   1 1
+import "env" "stepProcess"      step_process     1 0
+import "env" "callbackProcess"  callback_process 8 1
+import "env" "killProcess"      kill_process     1 0
+import "env" "transferMemory"   transfer_memory  5 0
 
-func loadProcess wasm
-  pushFromMemory wasm
-  return _loadProcess
+func load_process wasm
+  push_from_memory wasm
+  return _load_process
 

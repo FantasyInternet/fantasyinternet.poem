@@ -1,24 +1,24 @@
 include "./buffer_stack.poem"
 
-import "env" "setDisplayMode"         _setDisplayMode         5 0
-import "env" "print"                  _print                  0 0
-import "env" "displayMemory"          _displayMemory          3 0
-import "env" "getNativeDisplayWidth"  getNativeDisplayWidth   0 1
-import "env" "getNativeDisplayHeight" getNativeDisplayHeight  0 1
+import "env" "setDisplayMode"         _set_display_mode         5 0
+import "env" "print"                  _print                    0 0
+import "env" "displayMemory"          _display_memory           3 0
+import "env" "getNativeDisplayWidth"  get_native_display_width  0 1
+import "env" "getNativeDisplayHeight" get_native_display_height 0 1
 
-import "env" "setStepInterval" setStepInterval 1 0
+import "env" "setStepInterval" set_step_interval 1 0
 
-func setDisplayMode mode width height visibleWidth visibleHeight
-  if visibleWidth == null
-    visibleWidth = width
-  if visibleHeight == null
-    visibleHeight = height
-  _setDisplayMode mode width height visibleWidth visibleHeight
+func set_display_mode mode width height visible_width visible_height
+  if visible_width == null
+    visible_width = width
+  if visible_height == null
+    visible_height = height
+  _set_display_mode mode width height visible_width visible_height
 
 func print string
-  pushFromMemory string
+  push_from_memory string
   _print
 
-func displayMemory img offset
-  _displayMemory (address_of img) (size_of img) offset
+func display_memory img offset
+  _display_memory (address_of img) (size_of img) offset
 

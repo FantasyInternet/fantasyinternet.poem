@@ -1,20 +1,20 @@
 include "./buffer_stack.poem"
 
 import "env" "log"        _log          0 0
-import "env" "logNumber"  _log1Number   1 0
-import "env" "logNumber"  _log2Numbers  2 0
-import "env" "logNumber"  _log3Numbers  3 0
-import "env" "logNumber"  _log4Numbers  4 0
-import "env" "logNumber"  _log5Numbers  5 0
-import "env" "logNumber"  _log6Numbers  6 0
-import "env" "logNumber"  _log7Numbers  7 0
-import "env" "logNumber"  _log8Numbers  8 0
+import "env" "logNumber"  _log1_number   1 0
+import "env" "logNumber"  _log2_numbers  2 0
+import "env" "logNumber"  _log3_numbers  3 0
+import "env" "logNumber"  _log4_numbers  4 0
+import "env" "logNumber"  _log5_numbers  5 0
+import "env" "logNumber"  _log6_numbers  6 0
+import "env" "logNumber"  _log7_numbers  7 0
+import "env" "logNumber"  _log8_numbers  8 0
 
 func log string
-  pushFromMemory string
+  push_from_memory string
   _log
 
-func logNumbers n1 n2 n3 n4 n5 n6 n7 n8 n9
+func log_numbers n1 n2 n3 n4 n5 n6 n7 n8 n9
   if n9 == null
     if n8 == null
       if n7 == null
@@ -23,18 +23,18 @@ func logNumbers n1 n2 n3 n4 n5 n6 n7 n8 n9
             if n4 == null
               if n3 == null
                 if n2 == null
-                  _log1Number n1
+                  _log1_number n1
                 else
-                  _log2Numbers n1 n2
+                  _log2_numbers n1 n2
               else
-                _log3Numbers n1 n2 n3
+                _log3_numbers n1 n2 n3
             else
-              _log4Numbers n1 n2 n3 n4
+              _log4_numbers n1 n2 n3 n4
           else
-            _log5Numbers n1 n2 n3 n4 n5
+            _log5_numbers n1 n2 n3 n4 n5
         else
-          _log6Numbers n1 n2 n3 n4 n5 n6
+          _log6_numbers n1 n2 n3 n4 n5 n6
       else
-        _log7Numbers n1 n2 n3 n4 n5 n6 n7
+        _log7_numbers n1 n2 n3 n4 n5 n6 n7
     else
-      _log8Numbers n1 n2 n3 n4 n5 n6 n7 n8
+      _log8_numbers n1 n2 n3 n4 n5 n6 n7 n8

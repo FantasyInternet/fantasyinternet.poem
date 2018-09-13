@@ -1,8 +1,8 @@
 include "./input.poem"
 
-import "env" "getMouseX"        getMouseX       0 1
-import "env" "getMouseY"        getMouseY       0 1
-import "env" "getMousePressed"  getMousePressed 0 1
-import "env" "setNativeMouse"   setNativeMouse  1 0
+import "env" "getMouseX"        get_mouse_x       0 1
+import "env" "getMouseY"        get_mouse_y       0 1
+import "env" "getMousePressed"  get_mouse_pressed 0 1
+import "env" "setNativeMouse"   set_native_mouse  1 0
 
-focusInput 2
+focus_input 2

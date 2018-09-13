@@ -1,25 +1,25 @@
 include "./buffer_stack.poem"
 include "./input.poem"
 
-import "env" "getInputText"     _getInputText 1 0
-import "env" "getInputPosition" getInputPosition 0 1
-import "env" "getInputSelected" getInputSelected 0 1
-import "env" "getInputKey"      getInputKey 0 1
-import "env" "setInputType"     setInputType 1 0
-import "env" "setInputText"     _setInputText 0 0
-import "env" "setInputPosition" setInputPosition 2 0
-import "env" "replaceInputText" _replaceInputText 1 0
+import "env" "getInputText"     _get_input_text 1 0
+import "env" "getInputPosition" get_input_position 0 1
+import "env" "getInputSelected" get_input_selected 0 1
+import "env" "getInputKey"      get_input_key 0 1
+import "env" "setInputType"     set_input_type 1 0
+import "env" "setInputText"     _set_input_text 0 0
+import "env" "setInputPosition" set_input_position 2 0
+import "env" "replaceInputText" _replace_input_text 1 0
 
-func getInputText
-  return popStringToMemory _getInputText
+func get_input_text
+  return pop_string_to_memory _get_input_text
 
-func setInputText string
-  pushFromMemory string
-  _setInputText
+func set_input_text string
+  push_from_memory string
+  _set_input_text
 
-func replaceInputText search replace fromPos
-  pushFromMemory search
-  pushFromMemory replace
-  _replaceInputText fromPos
+func replace_input_text search replace from_pos
+  push_from_memory search
+  push_from_memory replace
+  _replace_input_text from_pos
 
-focusInput 1
+focus_input 1

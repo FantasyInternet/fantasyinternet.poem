@@ -15,7 +15,7 @@
     (call $-write16 (get_global $_height)  (i32.const 4) (i32.const 0x7468))
   ))
   (set_local $out (call $-new_value (i32.const 5) (i32.const 0)))
-  (call $-setToObj
+  (call $-set_to_obj
     (get_local $out)
     (get_global $_data)
     (call $-new_value
@@ -29,8 +29,8 @@
       )
     )
   )
-  (call $-setToObj (get_local $out) (get_global $_width) (get_local $width))
-  (call $-setToObj (get_local $out) (get_global $_height) (get_local $height))
+  (call $-set_to_obj (get_local $out) (get_global $_width) (get_local $width))
+  (call $-set_to_obj (get_local $out) (get_global $_height) (get_local $height))
   (get_local $out)
 )
 
@@ -58,9 +58,9 @@
   (set_local $x (call $-i32_u (get_local $x)))
   (set_local $y (call $-i32_u (get_local $y)))
   (set_local $c (call $-read32 (get_local $c) (i32.const 0)))
-  (set_local $w (call $-i32_u (call $-getFromObj (get_local $img) (get_global $_width))))
-  (set_local $h (call $-i32_u (call $-getFromObj (get_local $img) (get_global $_height))))
-  (set_local $img (call $-getFromObj (get_local $img) (get_global $_data)))
+  (set_local $w (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_width))))
+  (set_local $h (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_height))))
+  (set_local $img (call $-get_from_obj (get_local $img) (get_global $_data)))
   (if
     (i32.and
       (i32.lt_u (get_local $x) (get_local $w))
@@ -90,9 +90,9 @@
   (local $c i32)
   (set_local $x (call $-i32_u (get_local $x)))
   (set_local $y (call $-i32_u (get_local $y)))
-  (set_local $w (call $-i32_u (call $-getFromObj (get_local $img) (get_global $_width))))
-  (set_local $h (call $-i32_u (call $-getFromObj (get_local $img) (get_global $_height))))
-  (set_local $img (call $-getFromObj (get_local $img) (get_global $_data)))
+  (set_local $w (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_width))))
+  (set_local $h (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_height))))
+  (set_local $img (call $-get_from_obj (get_local $img) (get_global $_data)))
   (set_local $c (call $-new_value (i32.const 6) (i32.const 4)))
   (if
     (i32.and

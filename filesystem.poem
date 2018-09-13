@@ -11,42 +11,42 @@ export_table "table"
 var _callbacks = object
 
 func read path callback
-  pushFromMemory path
-  var reqID = _read #_readCB
-  _callbacks[""+reqID] = callback
-  return reqID
+  push_from_memory path
+  var req_id = _read #_read_c_b
+  _callbacks[""+req_id] = callback
+  return req_id
 
 func write path data callback
-  pushFromMemory path
-  pushFromMemory data
+  push_from_memory path
+  push_from_memory data
   return _write callback
 
 func delete path callback
-  pushFromMemory path
+  push_from_memory path
   return _delete callback
 
 func list path callback
-  pushFromMemory path
-  var reqID = _list #_readCB
-  _callbacks[""+reqID] = callback
-  return reqID
+  push_from_memory path
+  var req_id = _list #_read_c_b
+  _callbacks[""+req_id] = callback
+  return req_id
 
 func head path callback
-  pushFromMemory path
-  var reqID = _head #_readCB
-  _callbacks[""+reqID] = callback
-  return reqID
+  push_from_memory path
+  var req_id = _head #_read_c_b
+  _callbacks[""+req_id] = callback
+  return req_id
 
 func post path data callback
-  pushFromMemory path
-  var reqID = _post #_readCB
-  _callbacks[""+reqID] = callback
-  return reqID
+  push_from_memory path
+  var req_id = _post #_read_c_b
+  _callbacks[""+req_id] = callback
+  return req_id
 
-func _readCB success length reqID
-  var callback = _callbacks[""+reqID]
-  _callbacks[""+reqID] = null
+func _read_c_b success length req_id
+  var callback = _callbacks[""+req_id]
+  _callbacks[""+req_id] = null
   if success
-    var data = popToMemory length
-  #callback success data reqID
+    var data = pop_to_memory length
+  #callback success data req_id
 

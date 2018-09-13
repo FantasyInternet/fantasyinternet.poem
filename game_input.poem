@@ -1,10 +1,10 @@
 include "./input.poem"
 
-import "env" "getGameAxisX" getGameAxisX 0 1
-import "env" "getGameAxisY" getGameAxisY 0 1
-import "env" "getGameButtonA" getGameButtonA 0 1
-import "env" "getGameButtonB" getGameButtonB 0 1
-import "env" "getGameButtonX" getGameButtonX 0 1
-import "env" "getGameButtonY" getGameButtonY 0 1
+import "env" "getGameAxisX" get_game_axis_x 0 1
+import "env" "getGameAxisY" get_game_axis_y 0 1
+import "env" "getGameButtonA" get_game_button_a 0 1
+import "env" "getGameButtonB" get_game_button_b 0 1
+import "env" "getGameButtonX" get_game_button_x 0 1
+import "env" "getGameButtonY" get_game_button_y 0 1
 
-focusInput 3
+focus_input 3
