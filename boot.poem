@@ -3,6 +3,8 @@ include "./audio.poem"
 include "./display.poem"
 include "./filesystem.poem"
 include "./game_input.poem"
+include "./graphics.wast"
+include "./input.poem"
 include "./log.poem"
 include "./mouse_input.poem"
 include "./navigation.poem"
@@ -10,7 +12,7 @@ include "./process.poem"
 include "./text_input.poem"
 
 export "init" init
-  setDisplayMode 0 80 80
+  setDisplayMode 0 80 32
   print "hello... there...?\n"
   read "./README.md" #readout
   list "./" #readout
