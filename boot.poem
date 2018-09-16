@@ -3,7 +3,7 @@ include "./audio.poem"
 include "./display.poem"
 include "./filesystem.poem"
 include "./game_input.poem"
-include "./graphics.wast"
+include "./graphics.wast" 
 include "./input.poem"
 include "./log.poem"
 include "./mouse_input.poem"
@@ -11,15 +11,23 @@ include "./navigation.poem"
 include "./process.poem"
 include "./text_input.poem"
 
+var color = rgb 255 
+
 export "init" init
-  set_display_mode 0 80 32
-  print "hello... there...?\n"
-  read "./README.md" #readout
-  list "./" #readout
+  set_display_mode 1 320 200
+  var c = rgb 255 255 255
+  ~ log_numbers screen:width screen:height
+  var y = screen:height
+  while y
+    y--
+    var x = screen:width
+    while x
+      x--
+      pset x y rgb x y 127
 
-func readout success data req_id
-  if success
-    print data
-  else
-    print "Uuhmm.. got some trouble reading the file.."
+export "step" step
+  rect (get_mouse_x) (get_mouse_y) 8 8 color
+  ;
 
+export "display" display
+  display_memory

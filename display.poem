@@ -8,7 +8,11 @@ import "env" "getNativeDisplayHeight" get_native_display_height 0 1
 
 import "env" "setStepInterval" set_step_interval 1 0
 
+include "./graphics.wast" g\
+
 func set_display_mode mode width height visible_width visible_height
+  if mode == 1
+    g\screen = g\create_image width height
   if visible_width == null
     visible_width = width
   if visible_height == null
@@ -20,5 +24,9 @@ func print string
   _print
 
 func display_memory img offset
+  if img == null
+    img = g\screen
+  if datatype_of img == 5
+    img = img:data
   _display_memory (address_of img) (size_of img) offset
 
