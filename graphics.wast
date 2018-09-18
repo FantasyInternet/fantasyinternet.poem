@@ -2,6 +2,12 @@
 (global $_width (mut i32) (i32.const 0))
 (global $_height (mut i32) (i32.const 0))
 (global $screen (mut i32) (i32.const 0))
+(global $_blending_mode (mut i32) (i32.const 0))
+
+(func $set_blending_mode (param $mode i32) (result i32)
+  (set_global $_blending_mode (call $-i32_u (get_local $mode)))
+  (i32.const 0)
+)
 
 (func $create_image (param $width i32) (param $height i32) (result i32)
   (local $out i32)
@@ -112,26 +118,130 @@
       (i32.lt_u (get_local $y) (get_local $h))
     )
   (then
-    (call $-write32
-      (get_local $img)
-      (i32.mul
-        (i32.add
-          (i32.mul
-            (get_local $y)
-            (get_local $w)
+    (call $_pset
+      (i32.add 
+        (call $-offset (get_local $img))
+        (i32.mul
+          (i32.add
+            (i32.mul
+              (get_local $y)
+              (get_local $w)
+            )
+            (get_local $x)
           )
-          (get_local $x)
+          (i32.const 4)
         )
-        (i32.const 4)
       )
       (get_local $c)
     )
   ))
   (i32.const 0)
 )
+(func $_pset (param $addr i32) (param $c i32)
+  (local $br i32)
+  (local $bg i32)
+  (local $bb i32)
+  (local $ba i32)
+  (local $fr i32)
+  (local $fg i32)
+  (local $fb i32)
+  (local $fa i32)
+  (if (i32.eq (get_global $_blending_mode) (i32.const 0))(then
+    (i32.store (get_local $addr) (get_local $c))
+    (br 1)
+  ))
+  (if (i32.eq (get_global $_blending_mode) (i32.const 1))(then
+    (if (i32.gt_u (get_local $c) (i32.const 0x00ffffff))(then
+      (if (i32.ge_u (get_local $c) (i32.const 0xff000000))(then
+        (i32.store (get_local $addr) (get_local $c))
+      )(else
+        (set_local $fr (i32.and (get_local $c) (i32.const 0xff)))
+        (set_local $c (i32.rotr (get_local $c) (i32.const 8)))
+        (set_local $fg (i32.and (get_local $c) (i32.const 0xff)))
+        (set_local $c (i32.rotr (get_local $c) (i32.const 8)))
+        (set_local $fb (i32.and (get_local $c) (i32.const 0xff)))
+        (set_local $c (i32.rotr (get_local $c) (i32.const 8)))
+        (set_local $fa (i32.and (get_local $c) (i32.const 0xff)))
+        (set_local $c (i32.load (get_local $addr)))
+        (set_local $br (i32.and (get_local $c) (i32.const 0xff)))
+        (set_local $c (i32.rotr (get_local $c) (i32.const 8)))
+        (set_local $bg (i32.and (get_local $c) (i32.const 0xff)))
+        (set_local $c (i32.rotr (get_local $c) (i32.const 8)))
+        (set_local $bb (i32.and (get_local $c) (i32.const 0xff)))
+        (set_local $c (i32.rotr (get_local $c) (i32.const 8)))
+        (set_local $ba (i32.and (get_local $c) (i32.const 0xff)))
+
+        (if (i32.ne (get_local $br) (get_local $fr))(then
+          (set_local $br (i32.add
+            (get_local $br)
+            (i32.div_s
+              (i32.mul
+                (i32.sub
+                  (get_local $fr)
+                  (get_local $br)
+                )
+                (get_local $fa)
+              )
+              (i32.const 0xff)
+            )
+          ))
+          (i32.store8 (i32.add (get_local $addr) (i32.const 0)) (get_local $br))
+        ))
+        (if (i32.ne (get_local $bg) (get_local $fg))(then
+          (set_local $bg (i32.add
+            (get_local $bg)
+            (i32.div_s
+              (i32.mul
+                (i32.sub
+                  (get_local $fg)
+                  (get_local $bg)
+                )
+                (get_local $fa)
+              )
+              (i32.const 0xff)
+            )
+          ))
+          (i32.store8 (i32.add (get_local $addr) (i32.const 1)) (get_local $bg))
+        ))
+        (if (i32.ne (get_local $bb) (get_local $fb))(then
+          (set_local $bb (i32.add
+            (get_local $bb)
+            (i32.div_s
+              (i32.mul
+                (i32.sub
+                  (get_local $fb)
+                  (get_local $bb)
+                )
+                (get_local $fa)
+              )
+              (i32.const 0xff)
+            )
+          ))
+          (i32.store8 (i32.add (get_local $addr) (i32.const 2)) (get_local $bb))
+        ))
+        (if (i32.lt_u (get_local $ba) (i32.const 0xff))(then
+          (set_local $ba (i32.add
+            (get_local $ba)
+            (i32.div_u
+              (i32.mul
+                (get_local $fa)
+                (i32.sub
+                  (i32.const 0xff)
+                  (get_local $ba)
+                )
+              )
+              (i32.const 0xff)
+            )
+          ))
+          (i32.store8 (i32.add (get_local $addr) (i32.const 3)) (get_local $ba))
+        ))
+      ))
+    ))
+    (br 1)
+  ))
+)
+
 (func $pget (param $img i32) (param $x i32) (param $y i32) (result i32)
-  (local $w i32)
-  (local $h i32)
   (local $c i32)
   (if (i32.eq (call $-datatype (get_local $img)) (i32.const 2))(then
     (set_local $y (get_local $x))
@@ -140,19 +250,24 @@
   ))
   (set_local $x (call $-i32_u (get_local $x)))
   (set_local $y (call $-i32_u (get_local $y)))
+  (set_local $c (call $-new_value (i32.const 6) (i32.const 4)))
+  (call $-write32 (get_local $c) (i32.const 0) (call $_pget (get_local $img) (get_local $x) (get_local $y)))
+  (get_local $c)
+)
+(func $_pget (param $img i32) (param $x i32) (param $y i32) (result i32)
+  (local $w i32)
+  (local $h i32)
+  (local $c i32)
   (set_local $w (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_width))))
   (set_local $h (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_height))))
   (set_local $img (call $-get_from_obj (get_local $img) (get_global $_data)))
-  (set_local $c (call $-new_value (i32.const 6) (i32.const 4)))
   (if
     (i32.and
       (i32.lt_u (get_local $x) (get_local $w))
       (i32.lt_u (get_local $y) (get_local $h))
     )
   (then
-    (call $-write32
-      (get_local $c)
-      (i32.const 0)
+    (set_local $c
       (call $-read32
         (get_local $img)
         (i32.mul
@@ -186,17 +301,20 @@
     (set_local $x (get_local $img))
     (set_local $img (get_global $screen))
   ))
+  ;; read params
   (set_local $x (call $-i32_s (get_local $x)))
   (set_local $y (call $-i32_s (get_local $y)))
   (set_local $w (call $-i32_s (get_local $w)))
   (set_local $h (call $-i32_s (get_local $h)))
   (set_local $c (call $-read32 (get_local $c) (i32.const 0)))
 
+  ;; unpack image
   (set_local $imgWidth  (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_width ))))
   (set_local $imgHeight (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_height))))
   (set_local $img       (call $-get_from_obj (get_local $img) (get_global $_data)))
   (set_local $imgOffset (call $-offset (get_local $img)))
   
+  ;; clamp rect
   (br_if 0 (i32.ge_s (get_local $x) (get_local $imgWidth)))
   (br_if 0 (i32.ge_s (get_local $y) (get_local $imgHeight)))
   (br_if 0 (i32.lt_s (i32.add (get_local $x) (get_local $w)) (i32.const 0)))
@@ -214,18 +332,131 @@
   (if (i32.gt_s (i32.add (get_local $y) (get_local $h)) (get_local $imgHeight)) (then
     (set_local $h (i32.sub (get_local $imgHeight) (get_local $y)))))
   (set_local $i (i32.mul (i32.const 4) (i32.add (get_local $x) (i32.mul (get_local $y) (get_local $imgWidth)))))
-  (block (loop
-    (br_if 1 (i32.eq (get_local $h) (i32.const 0)))
-    (set_local $j (get_local $w))
-    (block (loop
-      (br_if 1 (i32.eq (get_local $j) (i32.const 0)))
-      (i32.store (i32.add (get_local $imgOffset) (get_local $i)) (get_local $c))
-      (set_local $i (i32.add (get_local $i) (i32.const 4)))
+
+  ;; starting point
+  (set_local $imgOffset (i32.add (get_local $imgOffset)
+    (i32.mul (i32.const 4) (i32.add (get_local $x) (i32.mul (get_local $y) (get_local $imgWidth))))
+  ))
+  ;; loop
+  (block (set_local $i (get_local $h)) (loop
+    (br_if 1 (i32.eqz (get_local $i) ))
+    (block (set_local $j (get_local $w)) (loop
+      (br_if 1 (i32.eqz (get_local $j) ))
+
+      (call $_pset (get_local $imgOffset) (get_local $c))
+      (set_local $imgOffset (i32.add (get_local $imgOffset) (i32.const 4)))
+
       (set_local $j (i32.sub (get_local $j) (i32.const 1)))
       (br 0)
     ))
-    (set_local $i (i32.sub (i32.add (get_local $i) (i32.mul (i32.const 4) (get_local $imgWidth))) (i32.mul (i32.const 4) (get_local $w))))
-    (set_local $h (i32.sub (get_local $h) (i32.const 1)))
+    (set_local $imgOffset (i32.add (get_local $imgOffset) (i32.mul (i32.const 4)
+      (i32.sub (get_local $imgWidth) (get_local $w))
+    )))
+
+    (set_local $i (i32.sub (get_local $i) (i32.const 1)))
     (br 0)
   ))
 )
+
+(func $draw_image (param $simg i32) (param $sx i32) (param $sy i32) (param $dimg i32) (param $dx i32) (param $dy i32) (param $w i32) (param $h i32) (result i32)
+  (local $x i32)
+  (local $y i32)
+  (local $sw i32)
+  (local $sh i32)
+  (local $soff i32)
+  (local $dw i32)
+  (local $dh i32)
+  (local $doff i32)
+  (i32.const 0)
+  ;; read parameters
+  (set_local $sx (call $-i32_s (get_local $sx)))
+  (set_local $sy (call $-i32_s (get_local $sy)))
+  (set_local $dx (call $-i32_s (get_local $dx)))
+  (set_local $dy (call $-i32_s (get_local $dy)))
+  (set_local $w  (call $-i32_s (get_local $w)))
+  (set_local $h  (call $-i32_s (get_local $h)))
+
+  ;; unpack source image
+  (set_local $sw (call $-i32_u  (call $-get_from_obj  (get_local $simg) (get_global $_width ))))
+  (set_local $sh (call $-i32_u  (call $-get_from_obj  (get_local $simg) (get_global $_height))))
+  (set_local $simg              (call $-get_from_obj  (get_local $simg) (get_global $_data)))
+  (set_local $soff              (call $-offset        (get_local $simg)))
+
+  ;; unpack dest image
+  (set_local $dw (call $-i32_u  (call $-get_from_obj  (get_local $dimg) (get_global $_width ))))
+  (set_local $dh (call $-i32_u  (call $-get_from_obj  (get_local $dimg) (get_global $_height))))
+  (set_local $dimg              (call $-get_from_obj  (get_local $dimg) (get_global $_data)))
+  (set_local $doff              (call $-offset        (get_local $dimg)))
+
+  ;; clamp source rect
+  (br_if 0 (i32.ge_s (get_local $sx) (get_local $sw)))
+  (br_if 0 (i32.ge_s (get_local $sy) (get_local $sh)))
+  (br_if 0 (i32.lt_s (i32.add (get_local $sx) (get_local $w)) (i32.const 0)))
+  (br_if 0 (i32.lt_s (i32.add (get_local $sy) (get_local $h)) (i32.const 0)))
+  (if (i32.lt_s (get_local $sx) (i32.const 0)) (then
+    (set_local $dx (i32.sub (get_local $dx) (get_local $sx)))
+    (set_local $w (i32.add (get_local $w) (get_local $sx)))
+    (set_local $sx (i32.const 0))
+  ))
+  (if (i32.lt_s (get_local $sy) (i32.const 0)) (then
+    (set_local $dy (i32.sub (get_local $dy) (get_local $sy)))
+    (set_local $h (i32.add (get_local $h) (get_local $sy)))
+    (set_local $sy (i32.const 0))
+  ))
+  (if (i32.gt_s (i32.add (get_local $sx) (get_local $w)) (get_local $sw)) (then
+    (set_local $w (i32.sub (get_local $sw) (get_local $sx)))))
+  (if (i32.gt_s (i32.add (get_local $sy) (get_local $h)) (get_local $sh)) (then
+    (set_local $h (i32.sub (get_local $sh) (get_local $sy)))))
+
+  ;; clamp dest rect
+  (br_if 0 (i32.ge_s (get_local $dx) (get_local $dw)))
+  (br_if 0 (i32.ge_s (get_local $dy) (get_local $dh)))
+  (br_if 0 (i32.lt_s (i32.add (get_local $dx) (get_local $w)) (i32.const 0)))
+  (br_if 0 (i32.lt_s (i32.add (get_local $dy) (get_local $h)) (i32.const 0)))
+  (if (i32.lt_s (get_local $dx) (i32.const 0)) (then
+    (set_local $sx (i32.sub (get_local $sx) (get_local $dx)))
+    (set_local $w (i32.add (get_local $w) (get_local $dx)))
+    (set_local $dx (i32.const 0))
+  ))
+  (if (i32.lt_s (get_local $dy) (i32.const 0)) (then
+    (set_local $sy (i32.sub (get_local $sy) (get_local $dy)))
+    (set_local $h (i32.add (get_local $h) (get_local $dy)))
+    (set_local $dy (i32.const 0))
+  ))
+  (if (i32.gt_s (i32.add (get_local $dx) (get_local $w)) (get_local $dw)) (then
+    (set_local $w (i32.sub (get_local $dw) (get_local $dx)))))
+  (if (i32.gt_s (i32.add (get_local $dy) (get_local $h)) (get_local $dh)) (then
+    (set_local $h (i32.sub (get_local $dh) (get_local $dy)))))
+
+  ;; starting point
+  (set_local $soff (i32.add (get_local $soff)
+    (i32.mul (i32.const 4) (i32.add (get_local $sx) (i32.mul (get_local $sy) (get_local $sw))))
+  ))
+  (set_local $doff (i32.add (get_local $doff)
+    (i32.mul (i32.const 4) (i32.add (get_local $dx) (i32.mul (get_local $dy) (get_local $dw))))
+  ))
+  ;; loop
+  (block (set_local $y (get_local $h)) (loop
+    (br_if 1 (i32.eqz (get_local $y) ))
+    (block (set_local $x (get_local $w)) (loop
+      (br_if 1 (i32.eqz (get_local $x) ))
+
+      (call $_pset (get_local $doff) (i32.load (get_local $soff)))
+      (set_local $soff (i32.add (get_local $soff) (i32.const 4)))
+      (set_local $doff (i32.add (get_local $doff) (i32.const 4)))
+
+      (set_local $x (i32.sub (get_local $x) (i32.const 1)))
+      (br 0)
+    ))
+    (set_local $soff (i32.add (get_local $soff) (i32.mul (i32.const 4)
+      (i32.sub (get_local $sw) (get_local $w))
+    )))
+    (set_local $doff (i32.add (get_local $doff) (i32.mul (i32.const 4)
+      (i32.sub (get_local $dw) (get_local $w))
+    )))
+
+    (set_local $y (i32.sub (get_local $y) (i32.const 1)))
+    (br 0)
+  ))
+)
+

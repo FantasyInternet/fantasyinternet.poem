@@ -1,11 +1,11 @@
 {
   "name": "fantasyinternet.poem",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Fantasy Internet library for Poetry",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "poetry boot.poem -t boot.wast -b boot.wasm --debug boot.debug.json"
+    "build": "poetry boot.poem -t boot.wast -b boot.wasm"
   },
   "repository": {
     "type": "git",

@@ -1,0 +1,22 @@
+include "./buffer_stack.poem"
+include "./graphics.wast"
+
+import "env" "readImage"   _read_image   1 1
+
+var _callbacks = object
+
+func read_image path callback
+  push_from_memory path
+  var req_id = _read_image #_read_cb
+  _callbacks[""+req_id] = callback
+  return req_id
+
+
+func _read_cb success width height req_id
+  var callback = _callbacks[""+req_id]
+  _callbacks[""+req_id] = null
+  if success
+    var image = create_image width height
+    _pop_to_memory (address_of image:data)
+  #callback success image req_id
+

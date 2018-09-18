@@ -12,7 +12,7 @@ var _callbacks = object
 
 func read path callback
   push_from_memory path
-  var req_id = _read #_read_c_b
+  var req_id = _read #_read_cb
   _callbacks[""+req_id] = callback
   return req_id
 
@@ -27,23 +27,23 @@ func delete path callback
 
 func list path callback
   push_from_memory path
-  var req_id = _list #_read_c_b
+  var req_id = _list #_read_cb
   _callbacks[""+req_id] = callback
   return req_id
 
 func head path callback
   push_from_memory path
-  var req_id = _head #_read_c_b
+  var req_id = _head #_read_cb
   _callbacks[""+req_id] = callback
   return req_id
 
 func post path data callback
   push_from_memory path
-  var req_id = _post #_read_c_b
+  var req_id = _post #_read_cb
   _callbacks[""+req_id] = callback
   return req_id
 
-func _read_c_b success length req_id
+func _read_cb success length req_id
   var callback = _callbacks[""+req_id]
   _callbacks[""+req_id] = null
   if success
