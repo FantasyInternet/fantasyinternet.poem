@@ -17,13 +17,14 @@ var background = null
 var pointer = create_image 16 16
 
 export "init" init
-  set_display_mode 1 320 200
+  set_display_mode 1 (floor(get_native_display_width)/3) (floor(get_native_display_height)/3)
   var c = rgb 255 255 255
   ~ log_numbers screen:width screen:height
   set_blending_mode 1
   read_image "./pointer.png" #load_pointer
 
 export "step" step
+  set_display_mode 1 (floor(get_native_display_width)/4) (floor(get_native_display_height)/4)
   draw_background
   draw_image pointer 0 0 screen (get_mouse_x)-4 (get_mouse_y)-4 pointer:width pointer:height
   rect (get_mouse_x) (get_mouse_y) 8 8 color
@@ -34,12 +35,8 @@ export "display" display
 func draw_background
   if background == null
     background = create_image screen:width screen:height
-    var y = screen:height
-    while y
-      y--
-      var x = screen:width
-      while x
-        x--
+    for y in range 0 screen:height
+      for x in range 0 screen:width
         pset background x y (rgb x y 127)
   draw_image background 0 0 screen 0 0 screen:width screen:height
 

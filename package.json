@@ -1,6 +1,6 @@
 {
   "name": "fantasyinternet.poem",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Fantasy Internet library for Poetry",
   "main": "index.js",
   "scripts": {
@@ -22,8 +22,7 @@
     "url": "https://github.com/FantasyInternet/fantasyinternet.poem/issues"
   },
   "homepage": "https://github.com/FantasyInternet/fantasyinternet.poem#readme",
-  "dependencies": {},
   "devDependencies": {
-    "poetry-compiler": "^0.17.0"
+    "poetry-compiler": "^0.20.0"
   }
 }

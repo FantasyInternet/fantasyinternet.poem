@@ -1,30 +1,30 @@
-(global $_data (mut i32) (i32.const 0))
-(global $_width (mut i32) (i32.const 0))
-(global $_height (mut i32) (i32.const 0))
+(global $~data (mut i32) (i32.const 0))
+(global $~width (mut i32) (i32.const 0))
+(global $~height (mut i32) (i32.const 0))
 (global $screen (mut i32) (i32.const 0))
-(global $_blending_mode (mut i32) (i32.const 0))
+(global $~blending_mode (mut i32) (i32.const 0))
 
 (func $set_blending_mode (param $mode i32) (result i32)
-  (set_global $_blending_mode (call $-i32_u (get_local $mode)))
+  (set_global $~blending_mode (call $-i32_u (get_local $mode)))
   (i32.const 0)
 )
 
 (func $create_image (param $width i32) (param $height i32) (result i32)
   (local $out i32)
-  (if (i32.eqz (get_global $_data))(then
-    (set_global $_data (call $-new_value   (i32.const 3) (i32.const 4)))
-    (call $-write32 (get_global $_data)    (i32.const 0) (i32.const 0x61746164))
-    (set_global $_width (call $-new_value  (i32.const 3) (i32.const 5)))
-    (call $-write32 (get_global $_width)   (i32.const 0) (i32.const 0x74646977))
-    (call $-write8  (get_global $_width)   (i32.const 4) (i32.const 0x68))
-    (set_global $_height (call $-new_value (i32.const 3) (i32.const 6)))
-    (call $-write32 (get_global $_height)  (i32.const 0) (i32.const 0x67696568))
-    (call $-write16 (get_global $_height)  (i32.const 4) (i32.const 0x7468))
+  (if (i32.eqz (get_global $~data))(then
+    (set_global $~data (call $-new_value   (i32.const 3) (i32.const 4)))
+    (call $-write32 (get_global $~data)    (i32.const 0) (i32.const 0x61746164))
+    (set_global $~width (call $-new_value  (i32.const 3) (i32.const 5)))
+    (call $-write32 (get_global $~width)   (i32.const 0) (i32.const 0x74646977))
+    (call $-write8  (get_global $~width)   (i32.const 4) (i32.const 0x68))
+    (set_global $~height (call $-new_value (i32.const 3) (i32.const 6)))
+    (call $-write32 (get_global $~height)  (i32.const 0) (i32.const 0x67696568))
+    (call $-write16 (get_global $~height)  (i32.const 4) (i32.const 0x7468))
   ))
   (set_local $out (call $-new_value (i32.const 5) (i32.const 0)))
   (call $-set_to_obj
     (get_local $out)
-    (get_global $_data)
+    (get_global $~data)
     (call $-new_value
       (i32.const 6)
       (i32.mul
@@ -36,8 +36,8 @@
       )
     )
   )
-  (call $-set_to_obj (get_local $out) (get_global $_width) (get_local $width))
-  (call $-set_to_obj (get_local $out) (get_global $_height) (get_local $height))
+  (call $-set_to_obj (get_local $out) (get_global $~width) (get_local $width))
+  (call $-set_to_obj (get_local $out) (get_global $~height) (get_local $height))
   (get_local $out)
 )
 
@@ -109,16 +109,16 @@
   (set_local $x (call $-i32_u (get_local $x)))
   (set_local $y (call $-i32_u (get_local $y)))
   (set_local $c (call $-read32 (get_local $c) (i32.const 0)))
-  (set_local $w (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_width))))
-  (set_local $h (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_height))))
-  (set_local $img (call $-get_from_obj (get_local $img) (get_global $_data)))
+  (set_local $w (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~width))))
+  (set_local $h (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~height))))
+  (set_local $img (call $-get_from_obj (get_local $img) (get_global $~data)))
   (if
     (i32.and
       (i32.lt_u (get_local $x) (get_local $w))
       (i32.lt_u (get_local $y) (get_local $h))
     )
   (then
-    (call $_pset
+    (call $~pset
       (i32.add 
         (call $-offset (get_local $img))
         (i32.mul
@@ -137,7 +137,7 @@
   ))
   (i32.const 0)
 )
-(func $_pset (param $addr i32) (param $c i32)
+(func $~pset (param $addr i32) (param $c i32)
   (local $br i32)
   (local $bg i32)
   (local $bb i32)
@@ -146,11 +146,11 @@
   (local $fg i32)
   (local $fb i32)
   (local $fa i32)
-  (if (i32.eq (get_global $_blending_mode) (i32.const 0))(then
+  (if (i32.eq (get_global $~blending_mode) (i32.const 0))(then
     (i32.store (get_local $addr) (get_local $c))
     (br 1)
   ))
-  (if (i32.eq (get_global $_blending_mode) (i32.const 1))(then
+  (if (i32.eq (get_global $~blending_mode) (i32.const 1))(then
     (if (i32.gt_u (get_local $c) (i32.const 0x00ffffff))(then
       (if (i32.ge_u (get_local $c) (i32.const 0xff000000))(then
         (i32.store (get_local $addr) (get_local $c))
@@ -251,16 +251,16 @@
   (set_local $x (call $-i32_u (get_local $x)))
   (set_local $y (call $-i32_u (get_local $y)))
   (set_local $c (call $-new_value (i32.const 6) (i32.const 4)))
-  (call $-write32 (get_local $c) (i32.const 0) (call $_pget (get_local $img) (get_local $x) (get_local $y)))
+  (call $-write32 (get_local $c) (i32.const 0) (call $~pget (get_local $img) (get_local $x) (get_local $y)))
   (get_local $c)
 )
-(func $_pget (param $img i32) (param $x i32) (param $y i32) (result i32)
+(func $~pget (param $img i32) (param $x i32) (param $y i32) (result i32)
   (local $w i32)
   (local $h i32)
   (local $c i32)
-  (set_local $w (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_width))))
-  (set_local $h (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_height))))
-  (set_local $img (call $-get_from_obj (get_local $img) (get_global $_data)))
+  (set_local $w (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~width))))
+  (set_local $h (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~height))))
+  (set_local $img (call $-get_from_obj (get_local $img) (get_global $~data)))
   (if
     (i32.and
       (i32.lt_u (get_local $x) (get_local $w))
@@ -309,9 +309,9 @@
   (set_local $c (call $-read32 (get_local $c) (i32.const 0)))
 
   ;; unpack image
-  (set_local $imgWidth  (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_width ))))
-  (set_local $imgHeight (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_height))))
-  (set_local $img       (call $-get_from_obj (get_local $img) (get_global $_data)))
+  (set_local $imgWidth  (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~width ))))
+  (set_local $imgHeight (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~height))))
+  (set_local $img       (call $-get_from_obj (get_local $img) (get_global $~data)))
   (set_local $imgOffset (call $-offset (get_local $img)))
   
   ;; clamp rect
@@ -343,7 +343,7 @@
     (block (set_local $j (get_local $w)) (loop
       (br_if 1 (i32.eqz (get_local $j) ))
 
-      (call $_pset (get_local $imgOffset) (get_local $c))
+      (call $~pset (get_local $imgOffset) (get_local $c))
       (set_local $imgOffset (i32.add (get_local $imgOffset) (i32.const 4)))
 
       (set_local $j (i32.sub (get_local $j) (i32.const 1)))
@@ -377,15 +377,15 @@
   (set_local $h  (call $-i32_s (get_local $h)))
 
   ;; unpack source image
-  (set_local $sw (call $-i32_u  (call $-get_from_obj  (get_local $simg) (get_global $_width ))))
-  (set_local $sh (call $-i32_u  (call $-get_from_obj  (get_local $simg) (get_global $_height))))
-  (set_local $simg              (call $-get_from_obj  (get_local $simg) (get_global $_data)))
+  (set_local $sw (call $-i32_u  (call $-get_from_obj  (get_local $simg) (get_global $~width ))))
+  (set_local $sh (call $-i32_u  (call $-get_from_obj  (get_local $simg) (get_global $~height))))
+  (set_local $simg              (call $-get_from_obj  (get_local $simg) (get_global $~data)))
   (set_local $soff              (call $-offset        (get_local $simg)))
 
   ;; unpack dest image
-  (set_local $dw (call $-i32_u  (call $-get_from_obj  (get_local $dimg) (get_global $_width ))))
-  (set_local $dh (call $-i32_u  (call $-get_from_obj  (get_local $dimg) (get_global $_height))))
-  (set_local $dimg              (call $-get_from_obj  (get_local $dimg) (get_global $_data)))
+  (set_local $dw (call $-i32_u  (call $-get_from_obj  (get_local $dimg) (get_global $~width ))))
+  (set_local $dh (call $-i32_u  (call $-get_from_obj  (get_local $dimg) (get_global $~height))))
+  (set_local $dimg              (call $-get_from_obj  (get_local $dimg) (get_global $~data)))
   (set_local $doff              (call $-offset        (get_local $dimg)))
 
   ;; clamp source rect
@@ -441,7 +441,7 @@
     (block (set_local $x (get_local $w)) (loop
       (br_if 1 (i32.eqz (get_local $x) ))
 
-      (call $_pset (get_local $doff) (i32.load (get_local $soff)))
+      (call $~pset (get_local $doff) (i32.load (get_local $soff)))
       (set_local $soff (i32.add (get_local $soff) (i32.const 4)))
       (set_local $doff (i32.add (get_local $doff) (i32.const 4)))
 
