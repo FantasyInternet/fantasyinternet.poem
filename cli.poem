@@ -1,0 +1,78 @@
+include "./text_input.poem"
+include "./display.poem"
+include "./log.poem"
+
+var history = array
+var history_pos = 0
+var _last_input_length = 0
+set_input_type 1
+
+func read_command
+  var input
+  if (get_input_key) == 38 && history_pos > 0
+    set_input_text input = history[history_pos--]
+    set_input_position (string_length input)
+  elsif (get_input_key) == 40 && history_pos < (array_length history)-1
+    set_input_text input = history[history_pos++]
+    set_input_position (string_length input)
+  input = read_line
+  if input
+    var i = array_search history input
+    if i != null
+      array_remove history i
+    array_push history input
+    history_pos = array_length history
+    return parse_command input
+
+func read_line
+  var input = get_input_text
+  if (get_input_key) == 13
+    print "\u001b[u"
+    print input
+    print "\u001b[J\n"
+    set_input_text ""
+    return input
+  else
+    var pos = get_input_position
+    var len = get_input_selected
+    print "\u001b[u\u001b[s"
+    print (string_slice input 0 pos)
+    print "\u001b[s\u001b[30;47m"
+    print (string_slice input pos len)
+    print "\u001b[0m"
+    print (string_slice input pos+len (string_length input))
+    if _last_input_length > (string_length input)
+      print "\u001b[J"
+    print "\u001b[u"
+    _last_input_length = (string_length input)
+
+func parse_command input
+  var args = array
+  var arg = ""
+  var in_str = false
+  var pos = 0
+  var len = string_length input
+  while pos < len
+    var char = string_slice input pos 1
+    if in_str
+      if char == "\""
+        array_push args arg
+        arg = ""
+        in_str = false
+      elsif char == "\\"
+        arg += string_slice input pos++ 1
+      else
+        arg += char
+    else
+      if char == "\""
+        in_str = true
+      elsif char == " "
+        if arg
+          array_push args arg
+          arg = ""
+      else
+        arg += char
+    pos++
+  if arg
+    array_push args arg
+  return args

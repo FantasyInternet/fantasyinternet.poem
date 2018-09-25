@@ -1,7 +1,7 @@
 include "./buffer_stack.poem"
 include "./input.poem"
 
-import "env" "getInputText"     _get_input_text 1 0
+import "env" "getInputText"     _get_input_text 0 1
 import "env" "getInputPosition" get_input_position 0 1
 import "env" "getInputSelected" get_input_selected 0 1
 import "env" "getInputKey"      get_input_key 0 1

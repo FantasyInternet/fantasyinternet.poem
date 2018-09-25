@@ -1,49 +1,15 @@
-include "./api_function_index.poem"
-include "./audio.poem"
 include "./display.poem"
-include "./filesystem.poem"
-include "./game_input.poem"
-include "./graphics.wast" 
-include "./input.poem"
-include "./log.poem"
-include "./mouse_input.poem"
-include "./navigation.poem"
-include "./process.poem"
-include "./read_image.poem"
-include "./text_input.poem"
-
-var color = rgb 255 127
-var background = null
-var pointer = create_image 16 16
+include "./cli.poem"
 
 export "init" init
-  set_display_mode 1 (floor(get_native_display_width)/3) (floor(get_native_display_height)/3)
-  var c = rgb 255 255 255
-  ~ log_numbers screen:width screen:height
-  set_blending_mode 1
-  read_image "./pointer.png" #load_pointer
+  set_display_mode 0 80 20
+  print "Ready? \n"
+  print "C:> "
 
 export "step" step
-  set_display_mode 1 (floor(get_native_display_width)/4) (floor(get_native_display_height)/4)
-  draw_background
-  draw_image pointer 0 0 screen (get_mouse_x)-4 (get_mouse_y)-4 pointer:width pointer:height
-  rect (get_mouse_x) (get_mouse_y) 8 8 color
-
-export "display" display
-  display_memory
-
-func draw_background
-  if background == null
-    background = create_image screen:width screen:height
-    for y in range 0 screen:height
-      for x in range 0 screen:width
-        pset background x y (rgb x y 127)
-  draw_image background 0 0 screen 0 0 screen:width screen:height
-
-func load_pointer success image req_id
-  if success
-    pointer = image
-    set_native_mouse false
-  else
-    log "could not load pointer"
+  var args
+  if args = read_command
+    for arg in args
+      print arg + "<\n"
+    print "\n$ "
 
