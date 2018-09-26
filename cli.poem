@@ -8,20 +8,8 @@ var _last_input_length = 0
 set_input_type 1
 
 func read_command
-  var input
-  if (get_input_key) == 38 && history_pos > 0
-    set_input_text input = history[history_pos--]
-    set_input_position (string_length input)
-  elsif (get_input_key) == 40 && history_pos < (array_length history)-1
-    set_input_text input = history[history_pos++]
-    set_input_position (string_length input)
-  input = read_line
+  var input = read_line
   if input
-    var i = array_search history input
-    if i != null
-      array_remove history i
-    array_push history input
-    history_pos = array_length history
     return parse_command input
 
 func read_line
@@ -31,8 +19,19 @@ func read_line
     print input
     print "\u001b[J\n"
     set_input_text ""
+    var i = array_search history input
+    if i != null
+      array_remove history i
+    array_push history input
+    history_pos = array_length history
     return input
   else
+    if (get_input_key) == 38 && history_pos > 0
+      set_input_text input = history[history_pos--]
+      set_input_position (string_length input)
+    elsif (get_input_key) == 40 && history_pos < (array_length history)
+      set_input_text input = history[history_pos++]
+      set_input_position (string_length input)
     var pos = get_input_position
     var len = get_input_selected
     print "\u001b[u\u001b[s"

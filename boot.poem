@@ -1,15 +1,23 @@
 include "./display.poem"
-include "./cli.poem"
+include "./graphics.wast"
+include "./filesystem.poem"
+include "./read_image.poem"
+include "./log.poem"
 
 export "init" init
-  set_display_mode 0 80 20
-  print "Ready? \n"
-  print "C:> "
+  log "initializing"
+  set_display_mode 1 320 180
+  set_blending_mode 1
+  log "loading font"
+  read_image "./6x8font.gif" #load_font
+
+func load_font success image req_id
+  if success
+    set_font image 6 8
 
 export "step" step
-  var args
-  if args = read_command
-    for arg in args
-      print arg + "<\n"
-    print "\n$ "
+  draw_text "The quick brown fox jumps over the lazy dogs! "
+  draw_text "Søde små jordbær! "
 
+export "display" display
+  display_memory
