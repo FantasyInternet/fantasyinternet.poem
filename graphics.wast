@@ -5,13 +5,18 @@
 (global $~tile_height (mut i32) (i32.const 0))
 (global $screen (mut i32) (i32.const 0))
 (global $~blending_mode (mut i32) (i32.const 0))
+(global $~opacity (mut i32) (i32.const 255))
 (global $font (mut i32) (i32.const 0))
 (global $~txtX (mut i32) (i32.const 0))
 (global $~txtY (mut i32) (i32.const 0))
 
 (func $set_blending_mode (param $mode i32) (result i32)
   (set_global $~blending_mode (call $-i32_u (get_local $mode)))
-  (i32.const 0)
+  (get_global $~blending_mode)
+)
+(func $set_opacity (param $opacity i32) (result i32)
+  (set_global $~opacity (call $-i32_u (get_local $opacity)))
+  (get_global $~opacity)
 )
 
 (func $create_image (param $width i32) (param $height i32) (result i32)
@@ -160,10 +165,21 @@
   (local $fg i32)
   (local $fb i32)
   (local $fa i32)
+  ;; apply opacity
+  (if (i32.lt_u (get_global $~opacity) (i32.const 0xff)) (then
+    (set_local $fa (i32.div_u (get_local $c) (i32.const 0x01000000)))
+    (set_local $fa (i32.div_u (i32.mul (get_local $fa) (get_global $~opacity)) (i32.const 0xff)))
+    (set_local $c (i32.add
+      (i32.and (get_local $c)  (i32.const 0x00ffffff))
+      (i32.mul (get_local $fa) (i32.const 0x01000000))
+    ))
+  ))
+  ;; replace
   (if (i32.eq (get_global $~blending_mode) (i32.const 0))(then
     (i32.store (get_local $addr) (get_local $c))
     (br 1)
   ))
+  ;; alpha blending
   (if (i32.eq (get_global $~blending_mode) (i32.const 1))(then
     (if (i32.gt_u (get_local $c) (i32.const 0x00ffffff))(then
       (if (i32.ge_u (get_local $c) (i32.const 0xff000000))(then
@@ -251,6 +267,15 @@
         ))
       ))
     ))
+    (br 1)
+  ))
+  ;; alpha lock
+  (if (i32.eq (get_global $~blending_mode) (i32.const 2))(then
+    (set_local $c (i32.add
+      (i32.and (get_local $c) (i32.const 0x00ffffff))
+      (i32.and (i32.load (get_local $addr)) (i32.const 0xff000000))
+    ))
+    (i32.store (get_local $addr) (get_local $c))
     (br 1)
   ))
 )
@@ -525,11 +550,35 @@
   (set_local $pos (call $-offset (get_local $text)))
   (set_local $len (call $-len (get_local $text)))
   (block(loop (br_if 1 (i32.eqz (get_local $len)))
-    (set_local $char (i32.load8_u (get_local $pos)))
+    (set_local $char (call $-char_code (get_local $pos)))
+    (if (i32.eq (get_local $char) (i32.const 9))(then
+      (set_global $~txtX
+        (i32.mul
+          (i32.div_u
+            (i32.add
+              (get_global $~txtX)
+              (i32.mul
+                (get_local $tw)
+                (i32.const 8)
+              )
+            )
+            (i32.mul
+              (get_local $tw)
+              (i32.const 8)
+            )
+          )
+          (i32.mul
+            (get_local $tw)
+            (i32.const 8)
+          )
+        )
+      )
+    ))
     (if (i32.eq (get_local $char) (i32.const 10))(then
       (set_global $~txtX (i32.const 0))
       (set_global $~txtY (i32.add (get_global $~txtY) (get_local $th)))
-    )(else
+    ))
+    (if (i32.ge_u (get_local $char) (i32.const 32))(then
       (set_local $char (i32.sub (get_local $char) (i32.const 32)))
       (set_local $x (i32.mul (i32.rem_u (get_local $char) (get_local $cols)) (get_local $tw)))
       (set_local $y (i32.mul (i32.div_u (get_local $char) (get_local $cols)) (get_local $th)))
@@ -551,15 +600,16 @@
       (set_global $~txtY (i32.add (get_global $~txtY) (get_local $th)))
       (if (i32.lt_s (i32.sub (get_local $h) (get_global $~txtY)) (get_local $th))(then
         (set_local $x (get_global $~blending_mode))
+        (set_local $y (get_global $~opacity))
         (set_global $~blending_mode (i32.const 0))
-        (set_local $y (i32.sub
-          (get_global $~txtY)
-          (i32.sub (get_local $h) (get_local $th))
-        ))
+        (set_global $~opacity (i32.const 255))
         (call $~draw_image
           (get_local $img)
           (i32.const 0)
-          (get_local  $y)
+          (i32.sub
+            (get_global $~txtY)
+            (i32.sub (get_local $h) (get_local $th))
+          )
           (get_local  $img)
           (i32.const 0)
           (i32.const 0)
@@ -580,9 +630,10 @@
           )
         )
         (set_global $~blending_mode (get_local $x))
+        (set_global $~opacity (get_local $y))
       ))
     ))
-    (set_local $pos (i32.add (get_local $pos) (call $-char_size (get_local $char))))
-    (set_local $len (i32.sub (get_local $len) (call $-char_size (get_local $char))))
+    (set_local $len (i32.sub (get_local $len) (call $-char_size (i32.load8_u (get_local $pos)))))
+    (set_local $pos (i32.add (get_local $pos) (call $-char_size (i32.load8_u (get_local $pos)))))
   (br 0)))
 )

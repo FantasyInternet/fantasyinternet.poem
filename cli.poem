@@ -1,6 +1,5 @@
 include "./text_input.poem"
 include "./display.poem"
-include "./log.poem"
 
 var history = array
 var history_pos = 0

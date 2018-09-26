@@ -8,16 +8,17 @@ export "init" init
   log "initializing"
   set_display_mode 1 320 180
   set_blending_mode 1
+  rect 310 170 20 20 rgb 0 0 127
   log "loading font"
-  read_image "./6x8font.gif" #load_font
+  read_image "./font.png" #load_font
 
 func load_font success image req_id
   if success
-    set_font image 6 8
+    set_font image 8 8
 
 export "step" step
-  draw_text "The quick brown fox jumps over the lazy dogs! "
-  draw_text "Søde små jordbær! "
+  draw_text "The quick brown fox jumps over the lazy dogs!\t"
+  draw_text "Søde små jordbær!\t"
 
 export "display" display
   display_memory
