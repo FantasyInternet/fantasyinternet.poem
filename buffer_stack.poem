@@ -4,6 +4,7 @@ import "env" "teeToMemory"    _tee_to_memory     1 0
 import "env" "getBufferSize"  _get_buffer_size   0 1
 
 export_memory "memory"
+export_table "table"
 
 func push_from_memory string
   _push_from_memory (address_of string) (size_of string)
