@@ -9,6 +9,7 @@
 (global $font (mut i32) (i32.const 0))
 (global $~txtX (mut i32) (i32.const 0))
 (global $~txtY (mut i32) (i32.const 0))
+(global $~color (mut i32) (i32.const 0))
 
 (func $set_blending_mode (param $mode i32) (result i32)
   (set_global $~blending_mode (call $-i32_u (get_local $mode)))
@@ -17,6 +18,10 @@
 (func $set_opacity (param $opacity i32) (result i32)
   (set_global $~opacity (call $-i32_u (get_local $opacity)))
   (get_global $~opacity)
+)
+(func $set_color (param $c i32) (result i32)
+  (set_global $~color (call $-read32 (get_local $c) (i32.const 0)))
+  (get_local $c)
 )
 
 (func $create_image (param $width i32) (param $height i32) (result i32)
@@ -127,7 +132,11 @@
   ))
   (set_local $x (call $-i32_u (get_local $x)))
   (set_local $y (call $-i32_u (get_local $y)))
-  (set_local $c (call $-read32 (get_local $c) (i32.const 0)))
+  (if (get_local $c)(then
+    (set_local $c (call $-read32 (get_local $c) (i32.const 0)))
+  )(else
+    (set_local $c (get_global $~color))
+  ))
   (set_local $w (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~width))))
   (set_local $h (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~height))))
   (set_local $img (call $-get_from_obj (get_local $img) (get_global $~data)))
@@ -169,7 +178,7 @@
   (if (i32.lt_u (get_global $~opacity) (i32.const 0xff)) (then
     (set_local $fa (i32.div_u (get_local $c) (i32.const 0x01000000)))
     (set_local $fa (i32.div_u (i32.mul (get_local $fa) (get_global $~opacity)) (i32.const 0xff)))
-    (set_local $c (i32.add
+    (set_local $c (i32.or
       (i32.and (get_local $c)  (i32.const 0x00ffffff))
       (i32.mul (get_local $fa) (i32.const 0x01000000))
     ))
@@ -340,7 +349,11 @@
   (set_local $y (call $-i32_s (get_local $y)))
   (set_local $w (call $-i32_s (get_local $w)))
   (set_local $h (call $-i32_s (get_local $h)))
-  (set_local $c (call $-read32 (get_local $c) (i32.const 0)))
+  (if (get_local $c)(then
+    (set_local $c (call $-read32 (get_local $c) (i32.const 0)))
+  )(else
+    (set_local $c (get_global $~color))
+  ))
   (call $~rect (get_local $img) (get_local $x) (get_local $y) (get_local $w) (get_local $h) (get_local $c))
 )
 (func $~rect (param $img i32) (param $x i32) (param $y i32) (param $w i32) (param $h i32) (param $c i32)
@@ -424,7 +437,11 @@
   (set_local $y1 (call $-i32_s (get_local $y1)))
   (set_local $x2 (call $-i32_s (get_local $x2)))
   (set_local $y2 (call $-i32_s (get_local $y2)))
-  (set_local $c (call $-read32 (get_local $c) (i32.const 0)))
+  (if (get_local $c)(then
+    (set_local $c (call $-read32 (get_local $c) (i32.const 0)))
+  )(else
+    (set_local $c (get_global $~color))
+  ))
 
   (set_local $w (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~width))))
   (set_local $h (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~height))))
