@@ -17,8 +17,15 @@ func load_font success image req_id
     set_font image 8 8
 
 export "step" step
-  draw_text "The quick brown fox jumps over the lazy dogs!\t"
-  draw_text "Søde små jordbær!\t"
+  var c = rgb 255 0 0
+  for x in range 0 screen:width 8
+    line `from` x 0 `to` screen:width-x screen:height c
+  var c = rgb 0 255 0
+  for y in range 0 screen:height 8
+    line `from` 0 y `to` screen:width screen:height-y c
+  line 50 10 51 10 (rgb 255)
+  ~ draw_text "The quick brown fox jumps over the lazy dogs!\t"
+  ~ draw_text "Søde små jordbær!\t"
 
 export "display" display
   display_memory

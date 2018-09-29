@@ -399,6 +399,147 @@
     (br 0)
   ))
 )
+(func $line (param $img i32) (param $x1 i32) (param $y1 i32) (param $x2 i32) (param $y2 i32) (param $c i32) (result i32)
+  (local $dx i32)
+  (local $dy i32)
+  (local $D i32)
+  (local $x i32)
+  (local $y i32)
+  (local $xi i32)
+  (local $yi i32)
+  (local $i i32)
+  (local $w i32)
+  (local $h i32)
+  (i32.const 0)
+  ;; read params
+  (if (i32.eq (call $-datatype (get_local $img)) (i32.const 2))(then
+    (set_local $c (get_local $y2))
+    (set_local $y2 (get_local $x2))
+    (set_local $x2 (get_local $y1))
+    (set_local $y1 (get_local $x1))
+    (set_local $x1 (get_local $img))
+    (set_local $img (get_global $screen))
+  ))
+  (set_local $x1 (call $-i32_s (get_local $x1)))
+  (set_local $y1 (call $-i32_s (get_local $y1)))
+  (set_local $x2 (call $-i32_s (get_local $x2)))
+  (set_local $y2 (call $-i32_s (get_local $y2)))
+  (set_local $c (call $-read32 (get_local $c) (i32.const 0)))
+
+  (set_local $w (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~width))))
+  (set_local $h (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~height))))
+  (set_local $img (call $-get_from_obj (get_local $img) (get_global $~data)))
+
+  ;; Bresenham's
+  (set_local $dx (i32.sub (get_local $x2) (get_local $x1)))
+  (set_local $dy (i32.sub (get_local $y2) (get_local $y1)))
+  (if (i32.lt_s (get_local $dx) (i32.const 0))(then
+    (set_local $xi (i32.const -1))
+    (set_local $dx (i32.mul (get_local $dx) (i32.const -1)))
+  )(else
+    (set_local $xi (i32.const 1))
+  ))
+  (if (i32.lt_s (get_local $dy) (i32.const 0))(then
+    (set_local $yi (i32.const -1))
+    (set_local $dy (i32.mul (get_local $dy) (i32.const -1)))
+  )(else
+    (set_local $yi (i32.const 1))
+  ))
+  (set_local $x (get_local $x1))
+  (set_local $y (get_local $y1))
+  (set_local $x2 (i32.add (get_local $x2) (get_local $xi)))
+  (set_local $y2 (i32.add (get_local $y2) (get_local $yi)))
+
+  (if (i32.gt_u (get_local $dx) (get_local $dy))(then
+    (set_local $D  (i32.sub (i32.mul (get_local $dy) (i32.const 2)) (get_local $dx)))
+    (block(loop (br_if 1 (i32.eq (get_local $x) (get_local $x2)))
+      (if (i32.and
+        (i32.lt_u (get_local $x) (get_local $w))
+        (i32.lt_u (get_local $y) (get_local $h))
+      )(then
+        (set_local $i (i32.mul
+          (i32.add
+            (i32.mul
+              (get_local $y)
+              (get_local $w)
+            )
+            (get_local $x)
+          )
+          (i32.const 4)
+        ))
+        (call $~pset
+          (i32.add
+            (call $-offset (get_local $img))
+            (get_local $i)
+          )
+          (get_local $c)
+        )
+      ))
+      (if (i32.gt_s (get_local $D) (i32.const 0))(then
+        (set_local $y (i32.add (get_local $y) (get_local $yi)))
+        (set_local $D (i32.sub
+          (get_local $D)
+          (i32.mul
+            (i32.const 2)
+            (get_local $dx)
+          )
+        ))
+      ))
+      (set_local $D (i32.add
+        (get_local $D)
+        (i32.mul
+          (i32.const 2)
+          (get_local $dy)
+        )
+      ))
+      (set_local $x (i32.add (get_local $x) (get_local $xi)))
+    (br 0)))
+  )(else
+    (set_local $D  (i32.sub (i32.mul (get_local $dx) (i32.const 2)) (get_local $dy)))
+    (block(loop (br_if 1 (i32.eq (get_local $y) (get_local $y2)))
+      (if (i32.and
+        (i32.lt_u (get_local $x) (get_local $w))
+        (i32.lt_u (get_local $y) (get_local $h))
+      )(then
+        (set_local $i (i32.mul
+          (i32.add
+            (i32.mul
+              (get_local $y)
+              (get_local $w)
+            )
+            (get_local $x)
+          )
+          (i32.const 4)
+        ))
+        (call $~pset
+          (i32.add
+            (call $-offset (get_local $img))
+            (get_local $i)
+          )
+          (get_local $c)
+        )
+      ))
+      (if (i32.gt_s (get_local $D) (i32.const 0))(then
+        (set_local $x (i32.add (get_local $x) (get_local $xi)))
+        (set_local $D (i32.sub
+          (get_local $D)
+          (i32.mul
+            (i32.const 2)
+            (get_local $dy)
+          )
+        ))
+      ))
+      (set_local $D (i32.add
+        (get_local $D)
+        (i32.mul
+          (i32.const 2)
+          (get_local $dx)
+        )
+      ))
+      (set_local $y (i32.add (get_local $y) (get_local $yi)))
+    (br 0)))
+  ))
+)
 
 (func $draw_image (param $simg i32) (param $sx i32) (param $sy i32) (param $dimg i32) (param $dx i32) (param $dy i32) (param $w i32) (param $h i32) (result i32)
   (set_local $sx (call $-i32_s (get_local $sx)))
