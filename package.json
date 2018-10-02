@@ -1,6 +1,6 @@
 {
   "name": "fantasyinternet.poem",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "description": "Fantasy Internet library for Poetry",
   "main": "index.js",
   "scripts": {

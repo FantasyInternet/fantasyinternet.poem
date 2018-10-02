@@ -1,8 +1,20 @@
 import "env" "startTone" _start_tone 4 0
 import "env" "stopTone" stop_tone 1 0
 
+var _a = 55 ~ freq of A
+var _semi = 1.0594630943592953 ~ 2^(1/12)
+
 func start_tone channel frequency volume type
   if volume == null
     volume = 1
   _start_tone channel frequency volume type
+
+func semitone tone
+  ~ calculate tone frequency
+  var freq = 1
+  for i in range 0 tone
+    freq *= _semi
+  freq *= _a
+  return freq
+
 
