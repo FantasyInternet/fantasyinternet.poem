@@ -8,7 +8,7 @@ set_input_type 1
 
 func read_command
   var input = read_line
-  if input
+  if input != null
     return parse_command input
 
 func read_line

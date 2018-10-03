@@ -1,17 +1,19 @@
-(global $~data (mut i32) (i32.const 0))
-(global $~width (mut i32) (i32.const 0))
-(global $~height (mut i32) (i32.const 0))
-(global $~tile_width (mut i32) (i32.const 0))
-(global $~tile_height (mut i32) (i32.const 0))
+(global $_data (mut i32) (i32.const 0))
+(global $_width (mut i32) (i32.const 0))
+(global $_height (mut i32) (i32.const 0))
+(global $_tile_width (mut i32) (i32.const 0))
+(global $_tile_height (mut i32) (i32.const 0))
 (global $screen (mut i32) (i32.const 0))
+(global $_blending_mode (mut i32) (i32.const 2))
 (global $~blending_mode (mut i32) (i32.const 0))
 (global $~opacity (mut i32) (i32.const 255))
 (global $font (mut i32) (i32.const 0))
 (global $~txtX (mut i32) (i32.const 0))
 (global $~txtY (mut i32) (i32.const 0))
-(global $~color (mut i32) (i32.const 0))
+(global $~color (mut i32) (i32.const 0xffffffff))
 
 (func $set_blending_mode (param $mode i32) (result i32)
+  (set_global $_blending_mode (get_local $mode))
   (set_global $~blending_mode (call $-i32_u (get_local $mode)))
   (get_global $~blending_mode)
 )
@@ -26,29 +28,29 @@
 
 (func $create_image (param $width i32) (param $height i32) (result i32)
   (local $out i32)
-  (if (i32.eqz (get_global $~data))(then
-    (set_global $~data (call $-new_value   (i32.const 3) (i32.const 4)))
-    (call $-write32 (get_global $~data)    (i32.const 0) (i32.const 0x61746164))
-    (set_global $~width (call $-new_value  (i32.const 3) (i32.const 5)))
-    (call $-write32 (get_global $~width)   (i32.const 0) (i32.const 0x74646977))
-    (call $-write8  (get_global $~width)   (i32.const 4) (i32.const 0x68))
-    (set_global $~height (call $-new_value (i32.const 3) (i32.const 6)))
-    (call $-write32 (get_global $~height)  (i32.const 0) (i32.const 0x67696568))
-    (call $-write16 (get_global $~height)  (i32.const 4) (i32.const 0x7468))
-    (set_global $~tile_width (call $-new_value  (i32.const 3) (i32.const 10)))
-    (call $-write32 (get_global $~tile_width)   (i32.const 0) (i32.const 0x656c6974))
-    (call $-write32 (get_global $~tile_width)   (i32.const 4) (i32.const 0x6469775f))
-    (call $-write16 (get_global $~tile_width)   (i32.const 8) (i32.const 0x6874))
-    (set_global $~tile_height (call $-new_value (i32.const 3) (i32.const 11)))
-    (call $-write32 (get_global $~tile_height)  (i32.const 0) (i32.const 0x656c6974))
-    (call $-write32 (get_global $~tile_height)  (i32.const 4) (i32.const 0x6965685f))
-    (call $-write16 (get_global $~tile_height)  (i32.const 8) (i32.const 0x6867))
-    (call $-write8  (get_global $~tile_height)  (i32.const 10) (i32.const 0x74))
+  (if (i32.eqz (get_global $_data))(then
+    (set_global $_data (call $-new_value   (i32.const 3) (i32.const 4)))
+    (call $-write32 (get_global $_data)    (i32.const 0) (i32.const 0x61746164))
+    (set_global $_width (call $-new_value  (i32.const 3) (i32.const 5)))
+    (call $-write32 (get_global $_width)   (i32.const 0) (i32.const 0x74646977))
+    (call $-write8  (get_global $_width)   (i32.const 4) (i32.const 0x68))
+    (set_global $_height (call $-new_value (i32.const 3) (i32.const 6)))
+    (call $-write32 (get_global $_height)  (i32.const 0) (i32.const 0x67696568))
+    (call $-write16 (get_global $_height)  (i32.const 4) (i32.const 0x7468))
+    (set_global $_tile_width (call $-new_value  (i32.const 3) (i32.const 10)))
+    (call $-write32 (get_global $_tile_width)   (i32.const 0) (i32.const 0x656c6974))
+    (call $-write32 (get_global $_tile_width)   (i32.const 4) (i32.const 0x6469775f))
+    (call $-write16 (get_global $_tile_width)   (i32.const 8) (i32.const 0x6874))
+    (set_global $_tile_height (call $-new_value (i32.const 3) (i32.const 11)))
+    (call $-write32 (get_global $_tile_height)  (i32.const 0) (i32.const 0x656c6974))
+    (call $-write32 (get_global $_tile_height)  (i32.const 4) (i32.const 0x6965685f))
+    (call $-write16 (get_global $_tile_height)  (i32.const 8) (i32.const 0x6867))
+    (call $-write8  (get_global $_tile_height)  (i32.const 10) (i32.const 0x74))
   ))
   (set_local $out (call $-new_value (i32.const 5) (i32.const 0)))
   (call $-set_to_obj
     (get_local $out)
-    (get_global $~data)
+    (get_global $_data)
     (call $-new_value
       (i32.const 6)
       (i32.mul
@@ -60,8 +62,8 @@
       )
     )
   )
-  (call $-set_to_obj (get_local $out) (get_global $~width) (get_local $width))
-  (call $-set_to_obj (get_local $out) (get_global $~height) (get_local $height))
+  (call $-set_to_obj (get_local $out) (get_global $_width) (get_local $width))
+  (call $-set_to_obj (get_local $out) (get_global $_height) (get_local $height))
   (get_local $out)
 )
 
@@ -137,9 +139,9 @@
   )(else
     (set_local $c (get_global $~color))
   ))
-  (set_local $w (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~width))))
-  (set_local $h (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~height))))
-  (set_local $img (call $-get_from_obj (get_local $img) (get_global $~data)))
+  (set_local $w (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_width))))
+  (set_local $h (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_height))))
+  (set_local $img (call $-get_from_obj (get_local $img) (get_global $_data)))
   (if
     (i32.and
       (i32.lt_u (get_local $x) (get_local $w))
@@ -306,9 +308,9 @@
   (local $w i32)
   (local $h i32)
   (local $c i32)
-  (set_local $w (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~width))))
-  (set_local $h (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~height))))
-  (set_local $img (call $-get_from_obj (get_local $img) (get_global $~data)))
+  (set_local $w (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_width))))
+  (set_local $h (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_height))))
+  (set_local $img (call $-get_from_obj (get_local $img) (get_global $_data)))
   (if
     (i32.and
       (i32.lt_u (get_local $x) (get_local $w))
@@ -364,9 +366,9 @@
   (local $imgHeight i32)
 
   ;; unpack image
-  (set_local $imgWidth  (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~width ))))
-  (set_local $imgHeight (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~height))))
-  (set_local $img       (call $-get_from_obj (get_local $img) (get_global $~data)))
+  (set_local $imgWidth  (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_width ))))
+  (set_local $imgHeight (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_height))))
+  (set_local $img       (call $-get_from_obj (get_local $img) (get_global $_data)))
   (set_local $imgOffset (call $-offset (get_local $img)))
   
   ;; clamp rect
@@ -443,9 +445,9 @@
     (set_local $c (get_global $~color))
   ))
 
-  (set_local $w (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~width))))
-  (set_local $h (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~height))))
-  (set_local $img (call $-get_from_obj (get_local $img) (get_global $~data)))
+  (set_local $w (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_width))))
+  (set_local $h (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_height))))
+  (set_local $img (call $-get_from_obj (get_local $img) (get_global $_data)))
 
   ;; Bresenham's
   (set_local $dx (i32.sub (get_local $x2) (get_local $x1)))
@@ -581,15 +583,15 @@
   (if (i32.eqz (get_local $dimg)) (return))
 
   ;; unpack source image
-  (set_local $sw (call $-i32_u  (call $-get_from_obj  (get_local $simg) (get_global $~width ))))
-  (set_local $sh (call $-i32_u  (call $-get_from_obj  (get_local $simg) (get_global $~height))))
-  (set_local $simg              (call $-get_from_obj  (get_local $simg) (get_global $~data)))
+  (set_local $sw (call $-i32_u  (call $-get_from_obj  (get_local $simg) (get_global $_width ))))
+  (set_local $sh (call $-i32_u  (call $-get_from_obj  (get_local $simg) (get_global $_height))))
+  (set_local $simg              (call $-get_from_obj  (get_local $simg) (get_global $_data)))
   (set_local $soff              (call $-offset        (get_local $simg)))
 
   ;; unpack dest image
-  (set_local $dw (call $-i32_u  (call $-get_from_obj  (get_local $dimg) (get_global $~width ))))
-  (set_local $dh (call $-i32_u  (call $-get_from_obj  (get_local $dimg) (get_global $~height))))
-  (set_local $dimg              (call $-get_from_obj  (get_local $dimg) (get_global $~data)))
+  (set_local $dw (call $-i32_u  (call $-get_from_obj  (get_local $dimg) (get_global $_width ))))
+  (set_local $dh (call $-i32_u  (call $-get_from_obj  (get_local $dimg) (get_global $_height))))
+  (set_local $dimg              (call $-get_from_obj  (get_local $dimg) (get_global $_data)))
   (set_local $doff              (call $-offset        (get_local $dimg)))
 
   ;; clamp source rect
@@ -665,8 +667,8 @@
 )
 
 (func $set_font (param $img i32) (param $tile_width i32) (param $tile_height i32) (result i32)
-  (call $-set_to_obj (get_local $img) (get_global $~tile_width) (get_local $tile_width))
-  (call $-set_to_obj (get_local $img) (get_global $~tile_height) (get_local $tile_height))
+  (call $-set_to_obj (get_local $img) (get_global $_tile_width) (get_local $tile_width))
+  (call $-set_to_obj (get_local $img) (get_global $_tile_height) (get_local $tile_height))
   (set_global $font (get_local $img))
   (get_global $font)
 )
@@ -683,7 +685,7 @@
   (call $-integer_u (get_global $~txtY))
 )
 
-(func $draw_text (param $text i32) (param $img i32) (result i32)
+(func $draw_text (param $img i32) (param $text i32) (result i32)
   (local $tw i32)
   (local $th i32)
   (local $cols i32)
@@ -695,16 +697,17 @@
   (local $x i32)
   (local $y i32)
   (i32.const 0)
-  (if (i32.eqz (get_local $img))(then
+  (if (i32.eq (call $-datatype (get_local $img)) (i32.const 3))(then
+    (set_local $text (get_local $img))
     (set_local $img (get_global $screen))
   ))
   (if (i32.eqz (get_global $font))(return (i32.const 0)))
   (if (i32.eqz (get_local $img))(return (i32.const 0)))
-  (set_local $tw (call $-i32_u (call $-get_from_obj (get_global $font) (get_global $~tile_width))))
-  (set_local $th (call $-i32_u (call $-get_from_obj (get_global $font) (get_global $~tile_height))))
-  (set_local $cols (i32.div_u (call $-i32_u (call $-get_from_obj (get_global $font) (get_global $~width))) (get_local $tw)))
-  (set_local $w  (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~width))))
-  (set_local $h  (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $~height))))
+  (set_local $tw (call $-i32_u (call $-get_from_obj (get_global $font) (get_global $_tile_width))))
+  (set_local $th (call $-i32_u (call $-get_from_obj (get_global $font) (get_global $_tile_height))))
+  (set_local $cols (i32.div_u (call $-i32_u (call $-get_from_obj (get_global $font) (get_global $_width))) (get_local $tw)))
+  (set_local $w  (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_width))))
+  (set_local $h  (call $-i32_u (call $-get_from_obj (get_local $img) (get_global $_height))))
   (set_local $pos (call $-offset (get_local $text)))
   (set_local $len (call $-len (get_local $text)))
   (block(loop (br_if 1 (i32.eqz (get_local $len)))

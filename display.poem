@@ -1,4 +1,5 @@
 include "./buffer_stack.poem"
+include "./graphics.wast" g\
 
 import "env" "setDisplayMode"         _set_display_mode         5 0
 import "env" "print"                  _print                    0 0
@@ -8,11 +9,12 @@ import "env" "getNativeDisplayHeight" get_native_display_height 0 1
 
 import "env" "setStepInterval" set_step_interval 1 0
 
-include "./graphics.wast" g\
 
 func set_display_mode mode width height visible_width visible_height
   if mode == 1
     g\screen = g\create_image width height
+  else
+    g\screen = null
   if visible_width == null
     visible_width = width
   if visible_height == null
@@ -23,6 +25,18 @@ func print string
   push_from_memory string
   _print
 
+func println string
+  print string + "\n"
+
+func cls
+  if g\screen
+    var bm = g\_blending_mode
+    g\set_blending_mode 0
+    g\rect 0 0 g\screen:width g\screen:height (g\rgb 0 0)
+    g\set_blending_mode bm
+  else
+    print "\u001b[2J"
+
 func display_memory img offset
   if img == null
     img = g\screen
@@ -30,3 +44,6 @@ func display_memory img offset
     img = img:data
   _display_memory (address_of img) (size_of img) offset
 
+func set_frame_rate fps
+  set_step_interval 1000/fps
+  
