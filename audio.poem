@@ -1,4 +1,6 @@
 import "env" "startTone" _start_tone 4 0
+import "env" "rampFrequency" ramp_frequency 3 0
+import "env" "rampVolume" ramp_volume 3 0
 import "env" "stopTone" stop_tone 1 0
 
 var _a = 55 ~ freq of A

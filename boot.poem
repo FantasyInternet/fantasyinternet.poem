@@ -1,31 +1,41 @@
 include "./display.poem"
-include "./graphics.wast"
-include "./filesystem.poem"
-include "./read_image.poem"
-include "./log.poem"
+include "./audio.poem"
+
+var pos = -1
+var last_tone
+var vol = 1
+var song = 
+  27;27;27;24;24;24;20;20;20;15;15;15       ~ Daisy, Daisy,
+  17;19;20;17;17;20;15;15;15;15;15;15       ~ Give me your answer, do!
+  22;22;22;27;27;27;24;24;24;20;20;20       ~ I'm half crazy,
+  17;19;20;22;22;24;22;22;22;22;22          ~ All for the love of you!
+  24;25;24;22;27;27;24;22;20;20;20;20       ~ It won't be a stylish marriage,
+  22;24;24;20;17;17;19;17;15;15;15;14       ~ I can't afford a carriage,
+  15;20;20;24;22;22;15;20;20;24;22          ~ But you'll look sweet on the seat
+  24;25;27;24;20;22;22;15;20;20;20;20;20;20 ~ Of a bicycle built for two!
 
 export "init" init
-  log "initializing"
-  set_display_mode 1 320 180
-  set_blending_mode 1
-  rect 310 170 20 20 rgb 0 0 127
-  log "loading font"
-  read_image "./font.png" #load_font
-
-func load_font success image req_id
-  if success
-    set_font image 8 8
+  set_display_mode 0 2 1
+  print "🎵"
+  set_step_interval 200
 
 export "step" step
-  set_color rgb 255 0 0
-  for x in range 0 screen:width 8
-    line `from` x 0 `to` screen:width-x screen:height
-  set_color rgb 0 255 0
-  for y in range 0 screen:height 8
-    line `from` 0 y `to` screen:width screen:height-y
-  line 50 10 51 10 (rgb 255)
-  ~ draw_text "The quick brown fox jumps over the lazy dogs!\t"
-  ~ draw_text "Søde små jordbær!\t"
+  var tone = song[pos++]
+  if tone == null ~ repeat song
+    tone = song[pos=0]
+  play_tone tone
 
-export "display" display
-  display_memory
+func play_tone tone channel
+  ~ fade out long tones
+  if tone == last_tone
+    vol /= 2
+  else
+    vol = 1
+  ~ calculate tone frequency
+  var freq = semitone tone
+  ~ sound like an organ
+  var multi=2
+  var chan=0
+  ~ while multi > 1
+  start_tone chan++ freq*(multi/=2)   vol 4
+  last_tone = tone

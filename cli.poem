@@ -21,7 +21,8 @@ func read_line
     var i = array_search history input
     if i != null
       array_remove history i
-    array_push history input
+    if input
+      array_push history input
     history_pos = array_length history
     return input
   else
